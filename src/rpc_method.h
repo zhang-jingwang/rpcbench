@@ -9,5 +9,6 @@ struct rpc_method {
 };
 
 const struct rpc_method sunrpc;
+const struct rpc_method bmirpc;
 
 #endif

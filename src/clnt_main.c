@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	int rank, rsize;
 	struct bench_options opts;
 	void *client;
-	const struct rpc_method *method = &sunrpc;
+	const struct rpc_method *method = &bmirpc;
 	void *data;
 	long data_len;
 
