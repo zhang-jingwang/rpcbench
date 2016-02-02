@@ -13,15 +13,16 @@ AddOption('--orangefs',
 	metavar='DIR',
 	help='orangefs build directory')
 orangefs=GetOption('orangefs')
-AddOption('--mpicc',
-	dest='mpicc',
+AddOption('--mpibin',
+	dest='mpibin',
 	type='string',
 	nargs=1,
 	action='store',
-	metavar='FILE',
-	default='mpicc',
+	metavar='DIR',
+	default='',
 	help='PATH to the mpicc command')
-env=Environment(CC=GetOption('mpicc'))
+mpibin=GetOption('mpibin')
+env=Environment(CC=mpibin+'/mpicc', CXX=mpibin+'mpicxx')
 clientobjs=[]
 if method == 'rpc':
    rpcgen = Builder(action = 'rpcgen $SOURCE')
@@ -31,7 +32,7 @@ if method == 'rpc':
    	    'rpc/rpcbench_clnt.c', 'rpc/rpcbench_svc.c'], './rpc/rpcbench.x')
    xdrobj = rpc.Object('./rpc/rpcbench_xdr.o', './rpc/rpcbench_xdr.c')
    rpc.Program('rpc_server', ['./src/rpcbench_server.c', './rpc/rpcbench_svc.c', xdrobj])
-   clientobjs = rpc.Object(['./rpc/rpcbench_clnt.c', './src/method_sunrpc.c']) + [xdrobj]
+   clientobjs = rpc.Object(['./rpc/rpcbench_clnt.c', './src/method_rpc.c']) + [xdrobj]
 elif method == 'bmi':
    bmi=Environment(ORANGEFS=orangefs)
    bmi.Append(CPPPATH=['$ORANGEFS/', '$ORANGEFS/src/io/bmi/',
@@ -40,8 +41,14 @@ elif method == 'bmi':
    bmi.Program('bmi_server', ['./src/bmi_server.c'], LIBS='bmi')
    clientobjs = bmi.Object('./src/method_bmi.o', './src/method_bmi.c')
    env.Append(LIBS='bmi', LIBPATH=orangefs+'/lib')
-elif method == '':
+elif method == 'asio':
+   asio=Environment(CCFLAGS='--std=c++11')
+   asio.Append(LIBS='boost_system')
+   env.Append(LIBS='boost_system')
+   asio.Program('asio_server', ['./src/asio_server.cpp'])
+   clientobjs = asio.Object('./src/method_asio.o', './src/method_asio.cpp')
+else:
    print "You must specify the test method [rpc, bmi or asio]!"
 
+env.Append(CPPDEFINES=['METHOD_BY_SCONS=' + method])
 env.Program('rpcbench_client', ['./src/clnt_main.c', './src/bench-args.c'] + clientobjs)
-env.Depends('rpcbench_client', 'rpc/rpcbench.h')

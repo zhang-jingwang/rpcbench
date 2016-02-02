@@ -8,7 +8,4 @@ struct rpc_method {
 	void (*destroy_client)(void *cl);
 };
 
-const struct rpc_method sunrpc;
-const struct rpc_method bmirpc;
-
 #endif

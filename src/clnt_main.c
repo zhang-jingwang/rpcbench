@@ -5,6 +5,8 @@
 #include <assert.h>
 #include "rpc_method.h"
 
+extern const struct rpc_method METHOD_BY_SCONS;
+
 int main(int argc, char **argv)
 {
 	int res;
@@ -13,7 +15,7 @@ int main(int argc, char **argv)
 	int rank, rsize;
 	struct bench_options opts;
 	void *client;
-	const struct rpc_method *method = &bmirpc;
+	const struct rpc_method *method = &(METHOD_BY_SCONS);
 	void *data;
 	long data_len;
 

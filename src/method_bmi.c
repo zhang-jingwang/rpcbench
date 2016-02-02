@@ -54,7 +54,7 @@ void bmi_destroy_client(void *cl)
 	BMI_finalize();
 }
 
-const struct rpc_method bmirpc = {
+const struct rpc_method bmi = {
 	.name = "bmi",
 	.create_client = bmi_create_client,
 	.call_server = bmi_call_server,

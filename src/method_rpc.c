@@ -21,7 +21,7 @@ void sunrpc_destroy_client(void *cl)
 	clnt_destroy(((CLIENT *)cl));
 }
 
-const struct rpc_method sunrpc = {
+const struct rpc_method rpc = {
 	.name = "SUN RPC",
 	.create_client = sunrpc_create_client,
 	.call_server = sunrpc_call_server,
